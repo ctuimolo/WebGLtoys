@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>2D Sierpinski Gasket</title>
+
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 aPosition;
+attribute vec4 aNormal;
+attribute vec2 aTextureCoord;
+
+uniform mat4 modelView;
+uniform mat4 projection;
+uniform vec4 lightPosition;
+
+varying vec2 vTextureCoord;
+varying vec3 N, L, E;
+
+precision mediump float;
+
+void
+main()
+{
+	vTextureCoord = aTextureCoord;
+
+	vec3 pos = -(modelView * aPosition).xyz;
+	vec3 light = lightPosition.xyz;
+	L = normalize( light - pos );
+	E =  -pos;
+	N = normalize( (modelView*aNormal).xyz);
+	
+	gl_Position = projection * modelView * aPosition;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform sampler2D textureUnit0;
+
+uniform vec4 ambientProduct;
+uniform vec4 diffuseProduct;
+uniform vec4 specularProduct;
+uniform float shininess;
+varying vec3 N, L, E;
+
+varying vec2 vTextureCoord;
+
+uniform float shade;
+uniform float tex;
+
+void
+main()
+{
+    vec4 fColor;
+    
+	vec3 H = normalize( L + E );
+	vec4 ambient = ambientProduct;
+	
+	float Kd = max( dot(L, N), 0.0 );
+	vec4  diffuse = Kd*diffuseProduct;
+	
+	float Ks = pow( max(dot(N, H), 0.0), shininess );
+	vec4  specular = Ks * specularProduct;
+		
+	if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+	
+	fColor = ambient + diffuse +specular;
+	fColor.a = 1.0;
+			
+    if(shade == 1.0 && tex == 1.0) gl_FragColor = fColor*texture2D(textureUnit0, vTextureCoord);
+	if(shade == 1.0 && tex == 0.0) gl_FragColor = fColor;
+	if(shade == 0.0 && tex == 1.0) gl_FragColor = texture2D(textureUnit0, vTextureCoord);
+}
+</script>
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="TextureDemo.js"></script>
+</head>   
+
+
+<body>
+<button id= "texture1st">Texture 1st</button>
+<button id= "texture2nd">Texture 2nd</button>
+<button id= "texture3rd">Texture 3rd</button>
+<button id= "texturetog">Texture On/Off</button>
+<button id= "lighttog">Light On/Off</button><br>
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<br>
+		<button id= "reset">Reset values</button><br>
+		<strong>Eye instructions:</strong>
+        <br>
+        W&S: Move eye up and down.<br>
+        A&D: Move eye right and left.<br><br>
+		<strong>Sphere instructions:</strong>
+        <br>
+        I&K: Move the sphere along the Z axis.<br>
+        J&L: Move the sphere along the X axis.<br>
+        <br><br>
+</body>
+</html>

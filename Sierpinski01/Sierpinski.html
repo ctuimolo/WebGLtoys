@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>3D Sierpinski Gasket</title>
+
+<button id="rotateX">Rotate on X</button>
+<button id="rotateY">Rotate on Y</button>
+<button id="rotateZ">Rotate on Z</button>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec3 vPosition;
+attribute vec3 vColor;
+varying vec4 color;
+
+void
+main()
+{
+	float zoom = 1.0 + vPosition.z;
+
+    gl_Position = vec4(vPosition, vPosition.z / 2.0 + 1.5);
+    color = vec4(vColor, 1.0);
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+   
+varying vec4 color;
+
+void
+main()
+{
+    gl_FragColor = color;
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="Sierpinski.js"></script>
+</head>   
+
+<body>
+
+<div>
+Subdivisions: 1<input id="sliderSub" type="range"
+ min="1" max="3" step="1" value="1" />
+ 3
+</div>
+
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<p>A & D: Move along the X axis </br>
+W & S: Move along the Y axis </br>
+Q & E: Move along the Z axis</p>
+<button id="reset">Reset position</button>
+<button id="EQ">Earthquake!!</button>
+</body>
+</html>

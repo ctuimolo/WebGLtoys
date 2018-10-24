@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec3 vPosition;
+            attribute vec3 vColor;
+
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+
+            varying vec4 color;
+
+            void main() {
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+                color = vec4(vColor, 1.0);
+            }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision mediump float;
+
+            varying vec4 color;
+
+            void main() {
+                gl_FragColor = color;
+            }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/math.js"></script>
+		<script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="FOV.js"></script>
+    </head>
+    <body>
+        <br>
+        Subdivisions: <strong>1</strong> <input id="subSlider" type="range" min="1" max="4" step="1" value="1"> 
+		<strong>4</strong>
+		<br>
+        Field of view: <strong>60&deg;</strong> <input id="fovSlider" type="range" min="60" max="120" step="10" value="90"> 
+		<strong>120&deg;</strong>
+        <br><br>
+        <button id= "xButton">Rotate X</button>
+        <button id= "yButton">Rotate Y</button>
+        <button id= "zButton">Rotate Z</button>
+        <br><br>
+        <canvas id="gl-canvas" width="700" height="700">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+		<br>
+		<button id= "resetE">Reset eye</button>
+		<button id= "resetG">Reset gasket</button>
+		<br><br> 
+		<strong>Eye instructions:</strong>
+        <br>
+        W&S: Look up and down.<br>
+        A&D: Look left and right.<br><br>
+		<strong>Gasket instructions:</strong>
+        <br>
+        I&K: Move the gasket along the Z axis.<br>
+        J&L: Move the gasket along the X axis.<br>
+        Y&H: Move the gasket along the Y axis.<br>
+        <br><br>
+    </body>
+</html>
